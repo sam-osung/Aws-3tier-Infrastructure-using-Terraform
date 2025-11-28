@@ -1,0 +1,4 @@
+# Minimal values file for ingress-nginx Helm chart
+controller:
+  service:
+    type: LoadBalancer
