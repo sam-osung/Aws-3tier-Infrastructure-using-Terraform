@@ -21,7 +21,7 @@ resource "aws_db_subnet_group" "rds_subnets" {
 resource "aws_db_instance" "postgres" {
   identifier           = "${var.project_name}-${var.environment}-rds"
   engine               = "postgres"
-  engine_version       = "8.0"
+  engine_version       = "16.11"
   instance_class       = var.rds_instance_type
   allocated_storage    = var.rds_allocated_storage
   db_name              = var.rds_dbname
