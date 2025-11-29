@@ -17,6 +17,34 @@ resource "aws_db_subnet_group" "rds_subnets" {
   }
 }
 
+#RDS Security group
+resource "aws_security_group" "rds_sg" {
+  name        = "${var.project_name}-${var.environment}-rds-sg"
+  description = "Allow EKS nodes to access Postgres"
+  vpc_id      = module.vpc.vpc_id
+
+  ingress {
+    description              = "Postgres from EKS nodes"
+    from_port                = 5432
+    to_port                  = 5432
+    protocol                 = "tcp"
+    security_groups          = [module.eks.node_security_group_id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Project = var.project_name
+    Env     = var.environment
+  }
+}
+
+
 # RDS PostgreSQL instance
 resource "aws_db_instance" "postgres" {
   identifier           = "${var.project_name}-${var.environment}-rds"
@@ -31,9 +59,7 @@ resource "aws_db_instance" "postgres" {
   skip_final_snapshot  = true
   db_subnet_group_name = aws_db_subnet_group.rds_subnets.name
 
-  # Attach to EKS cluster SG so nodes/pods can reach the DB.
-  # This relies on the EKS module exporting cluster_security_group_id.
-  vpc_security_group_ids = [module.eks.cluster_security_group_id]
+  vpc_security_group_ids = [aws_security_group.rds_sg.id]  
 
   tags = {
     Project = var.project_name
