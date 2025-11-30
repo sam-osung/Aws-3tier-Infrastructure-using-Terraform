@@ -43,8 +43,10 @@ resource "helm_release" "cert_manager" {
 }
 
 
-#ClusterIssuer
+# ClusterIssuer
 resource "kubernetes_manifest" "cluster_issuer" {
+  provider = kubernetes.post_eks   
+
   depends_on = [helm_release.cert_manager]
 
   manifest = {
