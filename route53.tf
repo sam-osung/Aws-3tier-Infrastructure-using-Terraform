@@ -7,7 +7,7 @@
 
 
 # Create a Route53 hosted zone for the domain
-resource "aws_route53_zone" "example" {
+resource "aws_route53_zone" "r53_zone" {
   name = var.namecheap_domain
   tags = {
     Project = var.project_name
