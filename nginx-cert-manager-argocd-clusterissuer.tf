@@ -47,7 +47,12 @@ resource "helm_release" "cert_manager" {
 resource "kubernetes_manifest" "cluster_issuer" {
   provider = kubernetes.post_eks   
 
-  depends_on = [helm_release.cert_manager]
+  depends_on = [
+    helm_release.cert_manager,
+    data.aws_eks_cluster.cluster,
+    data.aws_eks_cluster_auth.cluster
+]
+
 
   manifest = {
     apiVersion = "cert-manager.io/v1"
