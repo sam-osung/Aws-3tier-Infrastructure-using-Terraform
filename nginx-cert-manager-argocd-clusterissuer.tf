@@ -133,3 +133,23 @@ resource "helm_release" "argocd" {
     null_resource.create_cluster_issuer
   ]
 }
+
+
+# -------------------------
+# Apply Argocd-ingress
+# -------------------------
+resource "null_resource" "apply_argocd_ingress" {
+  depends_on = [
+    helm_release.argocd,           # wait for ArgoCD to be installed
+    helm_release.nginx_ingress,    # optional, ensures ingress controller exists
+    null_resource.create_cluster_issuer,
+  ]
+
+  provisioner "local-exec" {
+    environment = {
+      KUBECONFIG = local_file.kubeconfig.filename
+    }
+
+    command = "kubectl apply -n argocd -f argocd-ingress.yaml"
+  }
+}

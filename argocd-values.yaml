@@ -1,20 +1,3 @@
 server:
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    annotations:
-      kubernetes.io/ingress.class: "nginx"
-      cert-manager.io/cluster-issuer: "http-01-production"
-      nginx.ingress.kubernetes.io/force-ssl-redirect: "false"  # do not redirect
-      nginx.ingress.kubernetes.io/rewrite-target: /
-    hosts:
-      - argocd.samone.store
-    tls:
-      - hosts:
-          - argocd.samone.store
-        secretName: argocd-tls  # Cert-Manager will issue the certificate
-
-  insecure: true  # serve HTTP internally
-
-secret:
-  argocdServerAdminPassword: Sammy996@
+  extraArgs:
+  - --insecure
